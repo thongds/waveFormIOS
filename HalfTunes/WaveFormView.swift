@@ -187,6 +187,7 @@ class WaveFormView: UIView {
         
         mInitialized = true;
     }
+    
     func getGain(i : Int, numFrames : Int, frameGains : [Int]) -> Float {
         let x : Int = min(i, numFrames - 1);
         if (numFrames < 2) {
@@ -201,6 +202,7 @@ class WaveFormView: UIView {
             }
         }
     }
+    
     func getMeasuredWidth()-> Int {
         if let frame = mFrame{
             return Int(frame.width)
@@ -208,6 +210,7 @@ class WaveFormView: UIView {
             return 0
         }
     }
+    
     func getMeasuredHeight() -> Int {
         if let frame = mFrame{
             return Int(frame.height)
@@ -216,15 +219,17 @@ class WaveFormView: UIView {
         }
 
     }
+    
     func getScaledHeight(zoomLevel : Float, i : Int) -> Float {
-         return getNormalHeight(i: i)
-//        if (zoomLevel == 1.0) {
-//            return getNormalHeight(i);
-//        } else if (zoomLevel < 1.0) {
-//            return getZoomedOutHeight(zoomLevel, i);
-//        }
-//        return getZoomedInHeight(zoomLevel, i);
+        
+        if (zoomLevel == 1.0) {
+            return getNormalHeight(i: i)
+        } else if (zoomLevel < 1.0) {
+            return getZoomedOutHeight(zoomLevel: zoomLevel, i: i);
+        }
+        return getZoomedInHeight(zoomLevel: zoomLevel, i: i);
     }
+    
     func getNormalHeight(i : Int) -> Float {
          return getHeight(i: i, numFrames: mSoundFile.getNumFrames(), frameGains: mSoundFile.getFrameGains(), scaleFactor: scaleFactor, minGain: minGain, range: range);
     }
@@ -240,5 +245,30 @@ class WaveFormView: UIView {
         }
         return value;
     }
+    
+    func getZoomedOutHeight(zoomLevel : Float,i: Int) -> Float {
+        let f = Int(Float(i) / zoomLevel)
+        let x1 = getHeight(i: f, numFrames: mSoundFile.getNumFrames(), frameGains: mSoundFile.getFrameGains(), scaleFactor: scaleFactor, minGain: minGain, range: range);
+        let x2 = getHeight(i: f + 1, numFrames: mSoundFile.getNumFrames(), frameGains: mSoundFile.getFrameGains(), scaleFactor: scaleFactor, minGain: minGain, range: range);
+        return 0.5 * (x1 + x2);
+    }
+    func getZoomedInHeight(zoomLevel : Float, i: Int) -> Float {
+        let f =  Int(zoomLevel)
+        if (i == 0) {
+            return 0.5 * getHeight(i: 0, numFrames: mSoundFile.getNumFrames(), frameGains: mSoundFile.getFrameGains(), scaleFactor: scaleFactor, minGain: minGain, range: range);
+        }
+        if (i == 1) {
+            return getHeight(i: 0, numFrames: mSoundFile.getNumFrames(), frameGains: mSoundFile.getFrameGains(), scaleFactor: scaleFactor, minGain: minGain, range: range);
+        }
+        if (i % f == 0) {
+            let x1 = getHeight(i: i / f - 1, numFrames: mSoundFile.getNumFrames(), frameGains: mSoundFile.getFrameGains(), scaleFactor: scaleFactor, minGain: minGain, range: range);
+            let x2 = getHeight(i: i / f, numFrames: mSoundFile.getNumFrames(), frameGains: mSoundFile.getFrameGains(), scaleFactor: scaleFactor, minGain: minGain, range: range);
+            return 0.5 * (x1 + x2);
+        } else if ((i - 1) % f == 0) {
+            return getHeight(i: (i - 1) / f, numFrames: mSoundFile.getNumFrames(), frameGains: mSoundFile.getFrameGains(), scaleFactor: scaleFactor, minGain: minGain, range: range);
+        }
+        return 0;
 
+    }
+    
 }
