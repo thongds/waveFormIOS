@@ -154,12 +154,12 @@ class CheapMp3: NSObject {
             if (mpgVersion == 1) {
                 // MPEG 1 Layer III
                 
-                bitRate = BITRATES_MPEG1_L3[((buffer[2] & 0xF0) >> 4).hashValue]
-                sampleRate = SAMPLERATES_MPEG1_L3[((buffer[2] & 0x0C) >> 2).hashValue]
+                bitRate = BITRATES_MPEG1_L3[Int((buffer[2] & 0xF0) >> 4)]
+                sampleRate = SAMPLERATES_MPEG1_L3[Int((buffer[2] & 0x0C) >> 2)]
             } else {
                 // MPEG 2 Layer III
-                bitRate = BITRATES_MPEG2_L3[((buffer[2] & 0xF0) >> 4).hashValue]
-                sampleRate = SAMPLERATES_MPEG2_L3[((buffer[2] & 0x0C) >> 2).hashValue]
+                bitRate = BITRATES_MPEG2_L3[Int((buffer[2] & 0xF0) >> 4)]
+                sampleRate = SAMPLERATES_MPEG2_L3[Int((buffer[2] & 0x0C) >> 2)]
             }
             
             if (bitRate == 0 || sampleRate == 0) {
@@ -179,7 +179,7 @@ class CheapMp3: NSObject {
             
             // From here on we assume the frame is good
             mGlobalSampleRate = sampleRate;
-            let padding : Int = ((buffer[2] & 2) >> 1).hashValue
+            let padding : Int = Int((buffer[2] & 2) >> 1)
             let frameLen : Int = 144 * bitRate * 1000 / sampleRate + padding
             
             var gain : Int
@@ -188,17 +188,17 @@ class CheapMp3: NSObject {
                 mGlobalChannels = 1;
                 if (mpgVersion == 1) {
                     //TODO : chek it out
-                    gain = ((buffer[10] & 0x01) << 7).hashValue + ((buffer[11] & 0xFE) >> 1).hashValue
+                    gain = Int((buffer[10] & 0x01) << 7) + Int((buffer[11] & 0xFE) >> 1)
                 } else {
                     //TODO : chek it out
-                    gain = ((buffer[9] & 0x03) << 6).hashValue + ((buffer[10] & 0xFC) >> 2).hashValue;
+                    gain = Int((buffer[9] & 0x03) << 6) + Int((buffer[10] & 0xFC) >> 2);
                 }
             } else {
                 // 2 channels
                 mGlobalChannels = 2;
                 if (mpgVersion == 1) {
                     //TODO : chek it out
-                    gain = ((buffer[9]  & 0x7F) << 1).hashValue + ((buffer[10] & 0x80) >> 7).hashValue;
+                    gain = Int((buffer[9]  & 0x7F) << 1) + Int((buffer[10] & 0x80) >> 7);
                 } else {
                     gain = 0;  // ???
                 }

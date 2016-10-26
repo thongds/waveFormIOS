@@ -19,7 +19,7 @@ class DrawWaveFormViewController: UIViewController {
         let rectFrame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
        
         waveFormView = WaveFormView(frame: rectFrame)
-        
+        waveFormView?.setFileUrl(url: urlLocal)
        
         //image?.addSubview(waveFormView!)
         view.addSubview(waveFormView!)
