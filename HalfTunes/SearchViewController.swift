@@ -37,9 +37,14 @@ class SearchViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-        tableView.tableFooterView = UIView()
+    print("screen height\(view.frame.size)")
+    print("screen height bound \(view.bounds.size)")
+            tableView.tableFooterView = UIView()
   }
-  
+    override func viewDidAppear(_ animated: Bool) {
+        print("viewDidAppear screen height\(view.frame.size)")
+        print("viewDidAppear screen height bound \(view.bounds.size)")
+    }
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
   }
@@ -51,9 +56,9 @@ class SearchViewController: UIViewController {
                 urlSend = url
                 
             }
-            let speakVC = segue.destination as! SpeakingViewController
+            let drawWaveVC = segue.destination as! DrawWaveFormViewController
             print("urlSend \(urlSend)")
-            speakVC.urlLocal = urlSend
+            drawWaveVC.urlLocal = urlSend
             
         }
     }
