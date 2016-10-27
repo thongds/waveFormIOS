@@ -490,7 +490,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HalfTunes/DrawWaveFormViewController.swift"
-            timestampString = "499147257.331063"
+            timestampString = "499250093.541333"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "26"
@@ -506,11 +506,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HalfTunes/WaveFormView.swift"
-            timestampString = "499165661.95652"
+            timestampString = "499249211.258454"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
+            startingLineNumber = "115"
+            endingLineNumber = "115"
             landmarkName = "computeDoublesForAllZoomLevels()"
             landmarkType = "7">
          </BreakpointContent>
@@ -522,11 +522,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HalfTunes/WaveFormView.swift"
-            timestampString = "499165661.95652"
+            timestampString = "499249211.258454"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
             landmarkName = "computeDoublesForAllZoomLevels()"
             landmarkType = "7">
          </BreakpointContent>
@@ -538,11 +538,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HalfTunes/WaveFormView.swift"
-            timestampString = "499165661.95652"
+            timestampString = "499249211.258454"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
+            startingLineNumber = "171"
+            endingLineNumber = "171"
             landmarkName = "computeDoublesForAllZoomLevels()"
             landmarkType = "7">
          </BreakpointContent>
@@ -554,11 +554,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HalfTunes/WaveFormView.swift"
-            timestampString = "499165661.95652"
+            timestampString = "499249211.258454"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "98"
-            endingLineNumber = "98"
+            startingLineNumber = "121"
+            endingLineNumber = "121"
             landmarkName = "computeDoublesForAllZoomLevels()"
             landmarkType = "7">
          </BreakpointContent>
@@ -570,11 +570,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HalfTunes/WaveFormView.swift"
-            timestampString = "499181914.619285"
+            timestampString = "499249211.258454"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
             landmarkName = "getHeight(i:numFrames:frameGains:scaleFactor:minGain:range:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -650,12 +650,44 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HalfTunes/WaveFormView.swift"
-            timestampString = "499182002.063743"
+            timestampString = "499249211.258454"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "250"
-            endingLineNumber = "250"
+            startingLineNumber = "276"
+            endingLineNumber = "276"
             landmarkName = "getZoomedOutHeight(zoomLevel:i:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HalfTunes/WaveFormView.swift"
+            timestampString = "499249211.258454"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
+            landmarkName = "computeDoublesForAllZoomLevels()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HalfTunes/WaveFormView.swift"
+            timestampString = "499249211.258454"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
+            landmarkName = "computeDoublesForAllZoomLevels()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

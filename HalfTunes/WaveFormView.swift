@@ -25,6 +25,12 @@ class WaveFormView: UIView {
     var mFrame : CGRect?
     var mZoomLevel : Int = 0
     var mInitialized : Bool = false
+    var  mSelectionStart : Int = 0
+    var mSelectionEnd : Int = 0
+    var mOffset : Int = 0
+    var mTouchStart : Int = 0
+    var mTouchInitialOffset : Int = 0
+
     override init(frame: CGRect) {
         caShap = CAShapeLayer()
         mLenByZoomLevel = Array(repeatElement(0, count: 4))
@@ -51,12 +57,13 @@ class WaveFormView: UIView {
         var point : CGPoint
         let rectShap = CGRect(x: 0, y: 0, width: caShap.bounds.width, height: caShap.bounds.height)
         let rectPath = UIBezierPath(rect: rectShap)
-        let start : Int = 0
+        let start  = mOffset
         let ctr = Int(rectShap.height/2)
         if mInitialized{
             for i in 0 ..< Int(rectShap.width){
-                let floatData : Float = mZoomFactorByZoomLevel[mZoomLevel]
-                let h : Int  = (Int) (getScaledHeight(zoomLevel: floatData , i: start + i) * Float(getMeasuredHeight() / 2));
+                let zoomLevelFloat : Float = mZoomFactorByZoomLevel[mZoomLevel]
+                print("zoomLevelFloat\(zoomLevelFloat)")
+                let h : Int  = (Int) (getScaledHeight(zoomLevel: zoomLevelFloat , i: start + i) * Float(getMeasuredHeight() / 2));
                
                 let y0 = ctr - h
                 let y1 = ctr + 1 + h
@@ -68,21 +75,37 @@ class WaveFormView: UIView {
             caShap.path = rectPath.cgPath
         }
     }
-
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first{
+            mTouchStart = Int(touch.location(in: self).x);
+            mTouchInitialOffset = mOffset;
+        }
+    }
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first{
+            let point = touch.location(in: self)
+            mOffset = trap(pos: Int(mTouchInitialOffset + (mTouchStart - Int(point.x) )));
+           
+            self.setNeedsDisplay()
+        }
+    }
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+    }
     func setFileUrl(url:URL)  {
         urlLocal = url
         do{
-            print("drawWaveController \(urlLocal)")
+            
             try mSoundFile.ReadFile(url: urlLocal)
             mSampleRate = mSoundFile.getSampleRate();
             mSamplesPerFrame = mSoundFile.getSamplesPerFrame();
-            print("sampleRate \(mSampleRate), samplePerFrame \(mSamplesPerFrame)")
-            
             computeDoublesForAllZoomLevels();
         }catch let error as NSError{
            print(error)
         }
     }
+    // init request data
     func computeDoublesForAllZoomLevels(){
         let numFrames = mSoundFile.getNumFrames();
         
@@ -188,6 +211,10 @@ class WaveFormView: UIView {
         mInitialized = true;
     }
     
+    func maxPos() -> Int {
+         return mLenByZoomLevel[mZoomLevel];
+    }
+    
     func getGain(i : Int, numFrames : Int, frameGains : [Int]) -> Float {
         let x : Int = min(i, numFrames - 1);
         if (numFrames < 2) {
@@ -236,7 +263,6 @@ class WaveFormView: UIView {
     
     func getHeight(i : Int,numFrames : Int, frameGains : [Int],scaleFactor : Float,minGain : Float,range : Float) -> Float {
         var value : Float = (getGain(i: i, numFrames: numFrames, frameGains: frameGains) * scaleFactor - minGain) / range;
-        print("value: \(value)")
         if (value < 0.0){
             value = 0
         }
@@ -245,7 +271,7 @@ class WaveFormView: UIView {
         }
         return value;
     }
-    
+    // zoom
     func getZoomedOutHeight(zoomLevel : Float,i: Int) -> Float {
         let f = Int(Float(i) / zoomLevel)
         let x1 = getHeight(i: f, numFrames: mSoundFile.getNumFrames(), frameGains: mSoundFile.getFrameGains(), scaleFactor: scaleFactor, minGain: minGain, range: range);
@@ -270,5 +296,63 @@ class WaveFormView: UIView {
         return 0;
 
     }
+    func canZoomIn() -> Bool {
+        return (mZoomLevel < mNumZoomLevels - 1);
+    }
+   
+    func zoomIn()  {
+        if (canZoomIn()) {
+            mZoomLevel+=1;
+            let factor : Float = Float(mLenByZoomLevel[mZoomLevel]) / Float(mLenByZoomLevel[mZoomLevel - 1])
+            let factorInt = Int(factor)
+            mSelectionStart *= factorInt // TODO check it out
+            mSelectionEnd *= factorInt
+            var offsetCenter: Int  = mOffset + getMeasuredWidth() / factorInt
+            offsetCenter *= factorInt;
+            mOffset = offsetCenter - getMeasuredWidth() / factorInt;
+            if (mOffset < 0){
+                mOffset = 0
+            }
+            self.setNeedsDisplay()
+        }
+
+    }
+    
+    func canZoomOut() -> Bool {
+        return (mZoomLevel > 0)
+    }
+    
+    func zoomOut(){
+        if (canZoomOut()) {
+            mZoomLevel-=1;
+            let factor : Float = Float(mLenByZoomLevel[mZoomLevel + 1]) / Float(mLenByZoomLevel[mZoomLevel])
+            let factorInt = Int(factor)
+            mSelectionStart /= factorInt;
+            mSelectionEnd /= factorInt;
+            var offsetCenter =  Int(mOffset + getMeasuredWidth() / factorInt);
+            offsetCenter /= factorInt
+            mOffset = offsetCenter -  Int(getMeasuredWidth() / factorInt);
+            if (mOffset < 0){
+                mOffset = 0
+            }
+            self.setNeedsDisplay()
+        }
+    }
+   
+    // touch event 
+    func trap(pos : Int) -> Int {
+        print("maxPos \(maxPos())")
+        if (pos < 0){
+            return 0
+        }
+        if (pos > maxPos() ){
+            return maxPos();
+        }
+        return pos;
+            
+
+    }
+    
+    
     
 }
