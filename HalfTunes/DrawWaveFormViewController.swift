@@ -20,7 +20,9 @@ class DrawWaveFormViewController: UIViewController {
        
         waveFormView = WaveFormView(frame: rectFrame)
         waveFormView?.setFileUrl(url: urlLocal)
-        waveFormView?.zoomIn()
+        for _ in 0 ..< 1 {
+          waveFormView?.zoomIn()
+        }
         //image?.addSubview(waveFormView!)
         view.addSubview(waveFormView!)
         

@@ -12,6 +12,8 @@ class WaveFormView: UIView {
 
     
     private var caShap : CAShapeLayer
+    private var caShapMaskTime : CAShapeLayer
+    private var caShapUnSelect : CAShapeLayer
     private var urlLocal = URL(fileURLWithPath: "")
     private  var mSoundFile = CheapMp3()
     var mSampleRate: Int?
@@ -30,9 +32,16 @@ class WaveFormView: UIView {
     var mOffset : Int = 0
     var mTouchStart : Int = 0
     var mTouchInitialOffset : Int = 0
-
+    var mPlaybackPos : Int = -1
+    
+    var strokeColor:UIColor = UIColor.white
+    var fillColor : UIColor = UIColor.blue
+    //var unSelectColor : UIColor =
     override init(frame: CGRect) {
         caShap = CAShapeLayer()
+        caShapMaskTime = CAShapeLayer()
+        caShapUnSelect = CAShapeLayer()
+        
         mLenByZoomLevel = Array(repeatElement(0, count: 4))
         mZoomFactorByZoomLevel = Array(repeating: 0, count: 4)
         super.init(frame: frame)
@@ -40,10 +49,28 @@ class WaveFormView: UIView {
         caShap.bounds = CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height)
         caShap.position = CGPoint(x: frame.width/2, y: frame.height/2)
         caShap.backgroundColor = UIColor.red.cgColor
-        caShap.strokeColor = UIColor.white.cgColor
-        caShap.fillColor = UIColor.clear.cgColor
+        caShap.strokeColor = strokeColor.cgColor
+        
+        // select shape
+        
+        caShapUnSelect.bounds = CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height)
+        caShapUnSelect.position = CGPoint(x: frame.width/2, y: frame.height/2)
+        caShapUnSelect.backgroundColor = UIColor.clear.cgColor
+        caShapUnSelect.strokeColor = UIColor.gray.withAlphaComponent(0.8).cgColor
+
+        // mask time shape
+        
+        caShapMaskTime.bounds = CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height)
+        caShapMaskTime.position = CGPoint(x: frame.width/2, y: frame.height/2)
+        caShapMaskTime.backgroundColor = UIColor.clear.cgColor
+        caShapMaskTime.strokeColor = fillColor.cgColor
+
+        
+       // caShap.fillColor =  UIColor.red.cgColor
         self.layer.addSublayer(caShap)
-        //self.setNeedsDisplay()
+        self.layer.addSublayer(caShapMaskTime)
+        self.layer.addSublayer(caShapUnSelect)
+        self.setNeedsDisplay()
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -54,29 +81,64 @@ class WaveFormView: UIView {
     // An empty implementation adversely affects performance during animation.
     override func draw(_ rect: CGRect) {
         // Drawing code
+       
+        
+        
+//        let rectShap = CGRect(x: 0, y: 0, width: caShap.bounds.width, height: caShap.bounds.height)
+//        let rectPath = UIBezierPath(rect: rectShap)
         var point : CGPoint
-        let rectShap = CGRect(x: 0, y: 0, width: caShap.bounds.width, height: caShap.bounds.height)
-        let rectPath = UIBezierPath(rect: rectShap)
+        let linePath = UIBezierPath()
+        let lineTimePath = UIBezierPath()
+        let unSelectPath = UIBezierPath()
         let start  = mOffset
-        let ctr = Int(rectShap.height/2)
+        let ctr = Int(rect.height/2)
+//        strokeColor.setStroke()
+//        linePath.stroke()
+//        fillColor.setFill()
+//        linePath.fill()
         if mInitialized{
-            for i in 0 ..< Int(rectShap.width){
+            for i in 0 ..< Int(rect.width){
+               
                 let zoomLevelFloat : Float = mZoomFactorByZoomLevel[mZoomLevel]
-                print("zoomLevelFloat\(zoomLevelFloat)")
                 let h : Int  = (Int) (getScaledHeight(zoomLevel: zoomLevelFloat , i: start + i) * Float(getMeasuredHeight() / 2));
                
                 let y0 = ctr - h
                 let y1 = ctr + 1 + h
                 point = CGPoint(x: i, y: y0)
-                rectPath.move(to: point)
+                linePath.move(to: point)
                 point.y = CGFloat(y1)
-                rectPath.addLine(to: point)
+                linePath.addLine(to: point)
+                if i == Int(rect.width/2) {
+                    //masker time
+                    point = CGPoint(x: rect.width/3, y: 0)
+                    lineTimePath.move(to: point)
+                    point.y = CGFloat(rect.height)
+                    lineTimePath.addLine(to: point)
+                    
+                }
+                
             }
-            caShap.path = rectPath.cgPath
+            
+            for i in 0 ..< Int(rect.width) {
+                if i < Int (rect.width/3) || i > Int (rect.width/2) {
+                    point = CGPoint(x:i, y: 0)
+                    unSelectPath.move(to: point)
+                    point.y = CGFloat(rect.height)
+                    unSelectPath.addLine(to: point)
+                }
+
+            }
+           
+            caShap.path = linePath.cgPath
+            caShapUnSelect.path = unSelectPath.cgPath
+            caShapMaskTime.path = lineTimePath.cgPath
+            
+            
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("touch began")
         if let touch = touches.first{
             mTouchStart = Int(touch.location(in: self).x);
             mTouchInitialOffset = mOffset;
@@ -85,13 +147,14 @@ class WaveFormView: UIView {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first{
             let point = touch.location(in: self)
+            print("touch moved \(point.x)")
             mOffset = trap(pos: Int(mTouchInitialOffset + (mTouchStart - Int(point.x) )));
            
             self.setNeedsDisplay()
         }
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+        print("touch end")
     }
     func setFileUrl(url:URL)  {
         urlLocal = url
@@ -210,6 +273,16 @@ class WaveFormView: UIView {
         
         mInitialized = true;
     }
+    
+    //draw waveForm 
+    func drawWaveform(){
+        
+    }
+    
+    func drawWaveformLine() {
+        
+    }
+
     
     func maxPos() -> Int {
          return mLenByZoomLevel[mZoomLevel];
@@ -341,7 +414,6 @@ class WaveFormView: UIView {
    
     // touch event 
     func trap(pos : Int) -> Int {
-        print("maxPos \(maxPos())")
         if (pos < 0){
             return 0
         }
@@ -353,6 +425,28 @@ class WaveFormView: UIView {
 
     }
     
+    // Play event   
+    func setPlayback(pos : Int)  {
+        mPlaybackPos = pos
+    }
+    
+    func millisecsToPixels(msecs : Int) -> Int {
+        let z : Double = Double(mZoomFactorByZoomLevel[mZoomLevel])
+        let first = Double(msecs) * 1.0 * Double(mSampleRate!) * z
+        let last = (1000.0 * Double(mSamplesPerFrame!)) + 0.5
+        return Int(first/last)
+        
+    }
+    
+    func setParameters(start : Int, end : Int, offset : Int) {
+        mSelectionStart = start;
+        mSelectionEnd = end;
+        mOffset = offset;
+    }
+    
+    func getStart() -> Int {
+        return mSelectionStart
+    }
     
     
 }
