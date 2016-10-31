@@ -8,6 +8,12 @@
 
 import UIKit
 
+protocol WaveFormMoveProtocol {
+    static func touchesBegan(position : Int)
+    static func touchesMoved(position : Int)
+    static func touchesEnded(position : Int)
+}
+
 class WaveFormView: UIView {
 
     
@@ -34,10 +40,15 @@ class WaveFormView: UIView {
     var mTouchInitialOffset : Int = 0
     var mPlaybackPos : Int = -1
     
+    var startTest : Int = 0
+    var endTest : Int = 0
+    let buttonWidth : Int = 100
     var strokeColor:UIColor = UIColor.white
     var fillColor : UIColor = UIColor.blue
+    var mWaveFormProtocol : WaveFormMoveProtocol?
     //var unSelectColor : UIColor =
     override init(frame: CGRect) {
+        endTest = Int(frame.size.width)
         caShap = CAShapeLayer()
         caShapMaskTime = CAShapeLayer()
         caShapUnSelect = CAShapeLayer()
@@ -64,13 +75,29 @@ class WaveFormView: UIView {
         caShapMaskTime.position = CGPoint(x: frame.width/2, y: frame.height/2)
         caShapMaskTime.backgroundColor = UIColor.clear.cgColor
         caShapMaskTime.strokeColor = fillColor.cgColor
-
+        print("frame \(frame.size.height/2)")
+        let button = CustomButtom(frame: CGRect(x: 0, y: 100, width: buttonWidth, height: 50),parentViewParam : self,isLeft : true)
+        button.backgroundColor = UIColor.green
+        button.setTitle("Test Button", for: .normal)
+        //button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         
+        let buttonRight = CustomButtom(frame: CGRect(x: frame.size.width-100, y: frame.size.height-100, width: 100, height: 50),parentViewParam : self,isLeft : false)
+        buttonRight.backgroundColor = UIColor.green
+        buttonRight.setTitle("Test Button", for: .normal)
+        //buttonRight.addTarget(self, action: Selector("wasDrag"), for: .touchDragInside)
+    
        // caShap.fillColor =  UIColor.red.cgColor
         self.layer.addSublayer(caShap)
         self.layer.addSublayer(caShapMaskTime)
         self.layer.addSublayer(caShapUnSelect)
+       
+        addSubview(button)
+        addSubview(buttonRight)
         self.setNeedsDisplay()
+    }
+    
+    func setProtocol(waveFormProtocolParams : WaveFormMoveProtocol){
+        mWaveFormProtocol = waveFormProtocolParams
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -120,7 +147,8 @@ class WaveFormView: UIView {
             }
             
             for i in 0 ..< Int(rect.width) {
-                if i < Int (rect.width/3) || i > Int (rect.width/2) {
+                if i < startTest || i > endTest {
+                    print("i \(i),start \(startTest), end \(endTest)")
                     point = CGPoint(x:i, y: 0)
                     unSelectPath.move(to: point)
                     point.y = CGFloat(rect.height)
@@ -133,25 +161,33 @@ class WaveFormView: UIView {
             caShapUnSelect.path = unSelectPath.cgPath
             caShapMaskTime.path = lineTimePath.cgPath
             
-            
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("touch began")
         if let touch = touches.first{
-            mTouchStart = Int(touch.location(in: self).x);
+            
+            mTouchStart = Int(touch.location(in: self).x)
             mTouchInitialOffset = mOffset;
         }
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("touch moved ")
         if let touch = touches.first{
             let point = touch.location(in: self)
-            print("touch moved \(point.x)")
             mOffset = trap(pos: Int(mTouchInitialOffset + (mTouchStart - Int(point.x) )));
-           
             self.setNeedsDisplay()
         }
+    }
+    
+    public func updateStart(x : Float) {
+        startTest = Int(x)
+        self.setNeedsDisplay()
+    }
+    public func updateEnd(x : Float) {
+        endTest = Int(x) + buttonWidth
+        self.setNeedsDisplay()
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("touch end")

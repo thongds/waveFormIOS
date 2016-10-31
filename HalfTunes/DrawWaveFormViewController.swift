@@ -12,19 +12,15 @@ class DrawWaveFormViewController: UIViewController {
     var urlLocal = URL(fileURLWithPath: "")
    
     var waveFormView : WaveFormView?
-    
+    var controllerWaveForm: ControllerWaveForm?
     var viewParent : UIView?
     override func viewDidLoad() {
         super.viewDidLoad()
         let rectFrame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
-       
-        waveFormView = WaveFormView(frame: rectFrame)
-        waveFormView?.setFileUrl(url: urlLocal)
-        for _ in 0 ..< 1 {
-          waveFormView?.zoomIn()
-        }
+        
+        controllerWaveForm = ControllerWaveForm(frame: rectFrame, mp3Url: urlLocal)
         //image?.addSubview(waveFormView!)
-        view.addSubview(waveFormView!)
+        view.addSubview(controllerWaveForm!)
         
 //        viewParent = UIView(frame: rectFrame)
 //        waveFormView = WaveFormView(frame: rectFrame)
