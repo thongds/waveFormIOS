@@ -8,6 +8,12 @@
 
 import UIKit
 
+protocol ButtonMoveProtocol {
+    func buttonTouchesBegan(position : Int,isLeft : Bool)
+    func buttonTouchesMoved(position : Int,isLeft : Bool)
+    func buttonTouchesEnded(position : Int,isLeft : Bool)
+}
+
 class CustomButtom: UIButton {
 
     /*
@@ -18,36 +24,53 @@ class CustomButtom: UIButton {
     }
     */
     let parentView : UIView?
-    let waveFormView :WaveFormView
+    let controllFormView :ControllerWaveForm
     var type : Bool = false
-    init(frame: CGRect,parentViewParam : UIView,isLeft : Bool) {
+    let delegateButton : ButtonMoveProtocol?
+    var touchInsideButton : CGFloat = 0
+    var parentWidth : CGFloat = 0
+    init(frame: CGRect,parentViewParam : UIView,isLeft : Bool,delegate : ButtonMoveProtocol) {
         parentView = parentViewParam
-        waveFormView = parentView as! WaveFormView
+        parentWidth = parentViewParam.frame.width
+        controllFormView = parentView as! ControllerWaveForm
         type = isLeft
-        
+        delegateButton = delegate
         super.init(frame: frame)
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+        if let touche = touches.first {
+            let touchEnd = touche.location(in: parentView).x
+            delegateButton?.buttonTouchesEnded(position: Int(touchEnd), isLeft: type)
+        }
     }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+        if let touche = touches.first {
+            let touchesBegan = touche.location(in: parentView).x
+            print("touchesBeganx  \(touchesBegan)")
+            touchInsideButton = touche.location(in: self).x
+            delegateButton?.buttonTouchesBegan(position: Int(touchesBegan), isLeft: type)
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touche = touches.first {
-            let touchStart = touche.location(in: parentView).x
-            self.frame.origin.x = touchStart
-            if type {
-                waveFormView.updateStart(x: Float(touchStart))
-            }else {
-                waveFormView.updateEnd(x: Float(touchStart))
+            let touchMove = touche.location(in: parentView).x
+           
+            print("buttonMove.x  \(touchMove)")
+            print("buttonInside  \(touchInsideButton)")
+            let buttonPos = touchMove - touchInsideButton
+            if buttonPos > 0 && buttonPos < parentWidth {
+                    self.frame.origin.x = buttonPos
             }
-            print("btn touch \(touchStart)")
+            
+            delegateButton?.buttonTouchesMoved(position: Int(touchMove), isLeft: type)
         }
     }
 
