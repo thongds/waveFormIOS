@@ -47,7 +47,7 @@ class WaveFormView: UIView {
     var fillColor : UIColor = UIColor.blue
     var mWaveFormProtocol : WaveFormMoveProtocol?
     //var unSelectColor : UIColor =
-    override init(frame: CGRect) {
+    init(frame: CGRect,deletgate : WaveFormMoveProtocol?) {
         mSelectionEnd = Int(frame.size.width)
         caShap = CAShapeLayer()
         caShapMaskTime = CAShapeLayer()
@@ -91,12 +91,13 @@ class WaveFormView: UIView {
        
 //        addSubview(button)
 //        addSubview(buttonRight)
+        if let delegateProtocol = deletgate {
+             mWaveFormProtocol = delegateProtocol
+        }
         self.setNeedsDisplay()
     }
     
-    func setProtocol(waveFormProtocolParams : WaveFormMoveProtocol){
-        mWaveFormProtocol = waveFormProtocolParams
-    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -475,9 +476,9 @@ class WaveFormView: UIView {
     }
     
     func setParameters(start : Int, end : Int, offset : Int) {
-        mSelectionStart = start;
-        mSelectionEnd = end;
-        mOffset = offset;
+        mSelectionStart = start
+        mSelectionEnd = end
+        mOffset = offset
     }
     
     func getStart() -> Int {
@@ -487,6 +488,18 @@ class WaveFormView: UIView {
     func getEnd() -> Int{
         return mSelectionEnd
     }
+    // Play convert
+    func pixelsToMillisecs(pixels : Int) -> Int {
+        let z : Double = Double(mZoomFactorByZoomLevel[mZoomLevel])
+        let first = pixels * (1000 * mSamplesPerFrame!)
+        let second = (Double(mSampleRate!) * z) + 0.5
+        return Int( Double(first)/second )
+    }
     
+    // get value
     
+    func getOffset() -> Int {
+        return mOffset
+    }
+   
 }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5C0BEB831DB382EA00CF65AF /*  Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C0BEB821DB382EA00CF65AF /*  Download.swift */; };
 		5C0FCF711DC6314D002C34B3 /* ControllerWaveForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C0FCF701DC6314D002C34B3 /* ControllerWaveForm.swift */; };
+		5C1C97111DC9914700614A82 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C1C97101DC9914700614A82 /* Utils.swift */; };
 		5C28556E1DC5D096004697D0 /* CustomButtom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C28556D1DC5D096004697D0 /* CustomButtom.swift */; };
 		5C32CC791DB3B7EA00045852 /* SpeakingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C32CC781DB3B7EA00045852 /* SpeakingViewController.swift */; };
 		5C9E3D181DB8A9DA00226424 /* CheapMp3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E3D171DB8A9DA00226424 /* CheapMp3.swift */; };
@@ -27,6 +28,7 @@
 /* Begin PBXFileReference section */
 		5C0BEB821DB382EA00CF65AF /*  Download.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = " Download.swift"; sourceTree = "<group>"; };
 		5C0FCF701DC6314D002C34B3 /* ControllerWaveForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWaveForm.swift; sourceTree = "<group>"; };
+		5C1C97101DC9914700614A82 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = "../../../../../../Downloads/01-AudioWithAVFoundation-RecordingAndPlayback-Resources-2/01-AudioWithAVFoundation-RecordingAndPlayback-DemoStarter/PenguinPet/PenguinPet/Utils.swift"; sourceTree = "<group>"; };
 		5C28556D1DC5D096004697D0 /* CustomButtom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomButtom.swift; sourceTree = "<group>"; };
 		5C32CC781DB3B7EA00045852 /* SpeakingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeakingViewController.swift; sourceTree = "<group>"; };
 		5C9E3D171DB8A9DA00226424 /* CheapMp3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheapMp3.swift; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 		5CE1B3AC1DC01F4F00EC0288 /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
+				5C1C97101DC9914700614A82 /* Utils.swift */,
 				5CE1B3AD1DC01F8D00EC0288 /* WaveFormView.swift */,
 				5C28556D1DC5D096004697D0 /* CustomButtom.swift */,
 				5C0FCF701DC6314D002C34B3 /* ControllerWaveForm.swift */,
@@ -219,6 +222,7 @@
 				5C0FCF711DC6314D002C34B3 /* ControllerWaveForm.swift in Sources */,
 				5C0BEB831DB382EA00CF65AF /*  Download.swift in Sources */,
 				5C28556E1DC5D096004697D0 /* CustomButtom.swift in Sources */,
+				5C1C97111DC9914700614A82 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,8 +7,8 @@
 //
 
 import UIKit
-
-class ControllerWaveForm: UIView,WaveFormMoveProtocol,ButtonMoveProtocol{
+import AVFoundation
+class ControllerWaveForm: UIView{
 
     var urlLocal = URL(fileURLWithPath: "")
     
@@ -26,33 +26,56 @@ class ControllerWaveForm: UIView,WaveFormMoveProtocol,ButtonMoveProtocol{
     var mWidth : Int = 0
     var mOffsetGoal : Int = 0
     var mFlingVelocity : Int = 0
+    var playButton : UIButton
+    var zoomInButton : UIButton
+    var zoomOutButton : UIButton
+    var audioPlayer : AVAudioPlayer!
+    
+    var audioStatus : AudioStatus = AudioStatus.stopped
+    var mPlayStartMsec : Int = 0
     init(frame: CGRect,mp3Url : URL) {
         urlLocal = mp3Url
+        let playButtonRect = CGRect(x: frame.size.width/2-50, y: frame.size.height-100, width: 100, height: 100)
+        playButton = UIButton(frame: playButtonRect)
+        playButton.backgroundColor = UIColor.gray
+        playButton.setTitle("play", for: .normal)
+        
+        let zoomInRect = CGRect(x: 0, y: frame.size.height-100, width: 100, height: 100)
+        let zoomOutRect = CGRect(x: frame.size.width-100, y: frame.size.height-100, width: 100, height: 100)
+        
+        zoomInButton = UIButton(frame: zoomInRect)
+        zoomInButton.backgroundColor = UIColor.gray
+        zoomInButton.setTitle("+", for: .normal)
+        
+        zoomOutButton = UIButton(frame: zoomOutRect)
+        zoomOutButton.backgroundColor = UIColor.gray
+        zoomOutButton.setTitle("-", for: .normal)
         super.init(frame: frame)
-        let rectFrame = CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height)
+        let rectFrame = CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height-100)
         mWidth = Int(frame.size.width)
-        mWaveformView = WaveFormView(frame: rectFrame)
+        mWaveformView = WaveFormView(frame: rectFrame,deletgate: self)
         do {
             try mWaveformView?.setFileUrl(url: urlLocal)
         } catch let error as NSError{
             print(error)
         }
-//        for _ in 0 ..< 1 {
-//            mWaveformView?.zoomIn()
-//        }
-        mWaveformView?.setProtocol(waveFormProtocolParams: self)
+        playButton.addTarget(self, action: #selector(self.clickPlay), for: .touchUpInside)
+        zoomOutButton.addTarget(self, action: #selector(self.waveformZoomOut), for: .touchUpInside)
+        zoomInButton.addTarget(self, action: #selector(self.waveformZoomIn), for: .touchUpInside)
         finishOpeningSoundFile()
-        let button = CustomButtom(frame: CGRect(x: 0, y: 100, width: buttonWidth, height: 50),parentViewParam : self,isLeft : true,delegate: self)
-        button.backgroundColor = UIColor.green
-        button.setTitle("Test Button", for: .normal)
-        //button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
-        
-        let buttonRight = CustomButtom(frame: CGRect(x: Int(frame.size.width-100), y: Int(frame.size.height-100), width: buttonWidth, height: 50),parentViewParam : self,isLeft : false,delegate: self)
-        buttonRight.backgroundColor = UIColor.green
-        buttonRight.setTitle("Test Button", for: .normal)
+        let buttonStart = CustomButtom(frame: CGRect(x: 0, y: 100, width: buttonWidth, height: 50),parentViewParam : self,isLeft : true,delegate: self)
+        buttonStart.backgroundColor = UIColor.green
+        buttonStart.setTitle("Test Button", for: .normal)
+       
+        let buttonEnd = CustomButtom(frame: CGRect(x: Int(frame.size.width-100), y: Int(frame.size.height-150), width: buttonWidth, height: 50),parentViewParam : self,isLeft : false,delegate: self)
+        buttonEnd.backgroundColor = UIColor.green
+        buttonEnd.setTitle("Test Button", for: .normal)
         addSubview(mWaveformView!)
-        addSubview(buttonRight)
-        addSubview(button)
+        addSubview(buttonEnd)
+        addSubview(buttonStart)
+        addSubview(playButton)
+        addSubview(zoomInButton)
+        addSubview(zoomOutButton)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -69,56 +92,45 @@ class ControllerWaveForm: UIView,WaveFormMoveProtocol,ButtonMoveProtocol{
             resetPositions();
             updateDisplay();
         }
-    }
-    // waveForm touch
-    func touchesBegan(position : Int){
-        mTouchDragging = true
-        mTouchStart = position
-        mTouchInitialOffset = mOffset
-       
-    }
-    func touchesMoved(position : Int){
-        mOffset = trap(pos: Int(mTouchInitialOffset + (mTouchStart - position)));
-        updateDisplay()
-    }
-    func touchesEnded(position : Int){
-          print("touchesEnded touch begin")
-    }
-    // Button touch 
-    
-    func buttonTouchesBegan(position : Int,isLeft : Bool){
-        mTouchDragging = true;
-        mTouchStart = position;
-        mTouchInitialStartPos = mStartPos;
-        mTouchInitialEndPos = mEndPos;
-    }
-    func buttonTouchesMoved(position : Int,isLeft : Bool){
-        let delta = position - mTouchStart;
-        if isLeft {
-                mStartPos = trap(pos: Int (mTouchInitialStartPos + delta));
-               // mEndPos = trap(pos: Int (mTouchInitialEndPos + delta));
-                //waveFormView.updateStart(x: Float(position))
-        }else {
-                mEndPos = trap(pos: Int(mTouchInitialEndPos + delta));
-                if mEndPos < mStartPos {
-                    mEndPos = mStartPos
-                }
-                //waveFormView.updateEnd(x: Float(position))
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: urlLocal)
+            audioPlayer.delegate = self
+            
+        } catch let error as NSError {
+            print(error)
         }
-        updateDisplay()
-
-     }
-    func buttonTouchesEnded(position : Int,isLeft : Bool){
-        //print("buttonTouchesEnded")
-        mTouchDragging = false
-        if isLeft {
-            setOffsetGoalStart()
-        }else {
-            setOffsetGoalEnd()
-        }
+    }
+    func waveformZoomIn(){
+        mWaveformView?.zoomIn();
+        mStartPos = (mWaveformView?.getStart())!;
+        mEndPos = (mWaveformView?.getEnd())!;
+        mMaxPos = (mWaveformView?.maxPos())!;
+        mOffset = (mWaveformView?.getOffset())!;
+        mOffsetGoal = mOffset;
+        updateDisplay();
         
     }
-    
+    func  waveformZoomOut() {
+        mWaveformView?.zoomOut();
+        mStartPos = (mWaveformView?.getStart())!;
+        mEndPos = (mWaveformView?.getEnd())!;
+        mMaxPos = (mWaveformView?.maxPos())!;
+        mOffset = (mWaveformView?.getOffset())!;
+        mOffsetGoal = mOffset;
+        updateDisplay();
+    }
+    func clickPlay(){
+        onPlay(startPosition: mStartPos)
+//        if let audioPlayerUW = audioPlayer {
+//            if audioPlayerUW.isPlaying {
+//                audioPlayerUW.pause()
+//                playButton.setTitle("play", for: .normal)
+//            }else {
+//                audioPlayerUW.play()
+//                playButton.setTitle("pause", for: .normal)
+//            }
+//        }
+    }
     func trap(pos : Int) -> Int {
         if (pos < 0){
             return 0
@@ -127,6 +139,28 @@ class ControllerWaveForm: UIView,WaveFormMoveProtocol,ButtonMoveProtocol{
             return mMaxPos
         }
         return pos;
+    }
+    func onPlay(startPosition : Int){
+        if isPlaying() {
+            if let audioPlayerUW = audioPlayer {
+                audioPlayerUW.pause()
+                updateButton()
+            }
+            return
+        }
+        mPlayStartMsec = mWaveformView!.pixelsToMillisecs(pixels: startPosition);
+        if let audioPlayerUW = audioPlayer {
+            audioPlayerUW.currentTime = TimeInterval(startPosition)
+            audioPlayerUW.play()
+        }
+        updateButton()
+    }
+    func updateButton(){
+        if isPlaying() {
+            playButton.setTitle("pause", for: .normal)
+        }else {
+            playButton.setTitle("play", for: .normal)
+        }
     }
     func updateDisplay() {
         var offsetDelta : Int = 0
@@ -212,10 +246,90 @@ class ControllerWaveForm: UIView,WaveFormMoveProtocol,ButtonMoveProtocol{
         mStartPos = 0;
         mEndPos = mMaxPos;
     }
+    // Play state
+    func pause(){
+        if let audioPlayerUW = audioPlayer {
+            audioPlayerUW.pause()
+        }
+    }
+    func isPlaying() -> Bool {
+        if let audioPlayerUW = audioPlayer {
+            if audioPlayerUW.isPlaying {
+                return true
+            }
+            return false
+        }
+        return false
+    }
+}
+extension ControllerWaveForm : AVAudioPlayerDelegate {
+    func  play() {
+        print("play delegate ")
+        if audioPlayer.duration > 0.0 {
+           //audioPlayer.play()
+        }
+       
+    }
+    
+    func stopPlayback() {
+         print("stopPlayback delegate ")
+    }
+}
+extension ControllerWaveForm : WaveFormMoveProtocol {
+    // waveForm touch
+    func touchesBegan(position : Int){
+        mTouchDragging = true
+        mTouchStart = position
+        mTouchInitialOffset = mOffset
+        
+    }
+    func touchesMoved(position : Int){
+        mOffset = trap(pos: Int(mTouchInitialOffset + (mTouchStart - position)));
+        updateDisplay()
+    }
+    func touchesEnded(position : Int){
+        print("touchesEnded touch begin")
+    }
+
 }
 
+extension ControllerWaveForm : ButtonMoveProtocol{
+    // Button touch
+    
+    func buttonTouchesBegan(position : Int,isLeft : Bool){
+        mTouchDragging = true;
+        mTouchStart = position;
+        mTouchInitialStartPos = mStartPos;
+        mTouchInitialEndPos = mEndPos;
+    }
+    func buttonTouchesMoved(position : Int,isLeft : Bool){
+        let delta = position - mTouchStart;
+        if isLeft {
+            mStartPos = trap(pos: Int (mTouchInitialStartPos + delta));
+            // mEndPos = trap(pos: Int (mTouchInitialEndPos + delta));
+            //waveFormView.updateStart(x: Float(position))
+        }else {
+            mEndPos = trap(pos: Int(mTouchInitialEndPos + delta));
+            if mEndPos < mStartPos {
+                mEndPos = mStartPos
+            }
+            //waveFormView.updateEnd(x: Float(position))
+        }
+        updateDisplay()
+        
+    }
+    func buttonTouchesEnded(position : Int,isLeft : Bool){
+        //print("buttonTouchesEnded")
+        mTouchDragging = false
+        if isLeft {
+            setOffsetGoalStart()
+        }else {
+            setOffsetGoalEnd()
+        }
+        
+    }
 
-
+}
 
 
 
