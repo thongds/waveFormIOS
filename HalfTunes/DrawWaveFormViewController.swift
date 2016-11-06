@@ -19,9 +19,10 @@ class DrawWaveFormViewController: UIViewController {
         let rectFrame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
         
         controllerWaveForm = ControllerWaveForm(frame: rectFrame, mp3Url: urlLocal)
-        //image?.addSubview(waveFormView!)
         view.addSubview(controllerWaveForm!)
-        
+        //let controllWF  = ControllerWF(frame: rectFrame)
+        //image?.addSubview(waveFormView!)
+        //view.addSubview(controllerWaveForm!)
 //        viewParent = UIView(frame: rectFrame)
 //        waveFormView = WaveFormView(frame: rectFrame)
 //        viewParent?.addSubview(waveFormView!)

@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+
 class ControllerWaveForm: UIView{
 
     var urlLocal = URL(fileURLWithPath: "")
@@ -30,9 +31,10 @@ class ControllerWaveForm: UIView{
     var zoomInButton : UIButton
     var zoomOutButton : UIButton
     var audioPlayer : AVAudioPlayer!
-    
+    var mPlayStartOffset : Int = 0
     var audioStatus : AudioStatus = AudioStatus.stopped
     var mPlayStartMsec : Int = 0
+    var mTimer : Timer?
     init(frame: CGRect,mp3Url : URL) {
         urlLocal = mp3Url
         let playButtonRect = CGRect(x: frame.size.width/2-50, y: frame.size.height-100, width: 100, height: 100)
@@ -120,16 +122,9 @@ class ControllerWaveForm: UIView{
         updateDisplay();
     }
     func clickPlay(){
+      
         onPlay(startPosition: mStartPos)
-//        if let audioPlayerUW = audioPlayer {
-//            if audioPlayerUW.isPlaying {
-//                audioPlayerUW.pause()
-//                playButton.setTitle("play", for: .normal)
-//            }else {
-//                audioPlayerUW.play()
-//                playButton.setTitle("pause", for: .normal)
-//            }
-//        }
+        
     }
     func trap(pos : Int) -> Int {
         if (pos < 0){
@@ -141,19 +136,25 @@ class ControllerWaveForm: UIView{
         return pos;
     }
     func onPlay(startPosition : Int){
+        print("OnPlay startPos \(startPosition)")
+        
         if isPlaying() {
             if let audioPlayerUW = audioPlayer {
                 audioPlayerUW.pause()
+                mTimer?.invalidate()
+                mTimer = nil
                 updateButton()
             }
             return
         }
         mPlayStartMsec = mWaveformView!.pixelsToMillisecs(pixels: startPosition);
         if let audioPlayerUW = audioPlayer {
-            audioPlayerUW.currentTime = TimeInterval(startPosition)
+            audioPlayerUW.currentTime = TimeInterval(mPlayStartMsec)
             audioPlayerUW.play()
         }
         updateButton()
+        mTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(self.updateDisplay), userInfo: nil, repeats: true)
+        mTimer?.fire()
     }
     func updateButton(){
         if isPlaying() {
@@ -163,7 +164,18 @@ class ControllerWaveForm: UIView{
         }
     }
     func updateDisplay() {
+        //print("call updateDisplay")
+        if isPlaying() {
+            let now : Int = Int(round(Double(audioPlayer.currentTime)*1000) + Double(mPlayStartOffset))
+            //print("now \(now)")
+            let frames : Int = mWaveformView!.millisecsToPixels(msecs: now)
+            print("frames \(frames)")
+            mWaveformView?.setPlayback(pos: frames);
+            setOffsetGoalNoUpdate(offset: frames - mWidth / 2);
+        }
+        
         var offsetDelta : Int = 0
+        
         if (!mTouchDragging) {
             if (mFlingVelocity != 0) {
                 
@@ -212,7 +224,7 @@ class ControllerWaveForm: UIView{
         
         mOffset += offsetDelta
         if let waveFormUW = mWaveformView {
-            waveFormUW.setParameters(start: mStartPos, end: mEndPos, offset: mOffset);
+            waveFormUW.setParameters(start: mStartPos, end: mEndPos, offset: mOffset)
             waveFormUW.setNeedsDisplay()
         }
     }
@@ -261,19 +273,10 @@ class ControllerWaveForm: UIView{
         }
         return false
     }
+    
 }
 extension ControllerWaveForm : AVAudioPlayerDelegate {
-    func  play() {
-        print("play delegate ")
-        if audioPlayer.duration > 0.0 {
-           //audioPlayer.play()
-        }
-       
-    }
-    
-    func stopPlayback() {
-         print("stopPlayback delegate ")
-    }
+   
 }
 extension ControllerWaveForm : WaveFormMoveProtocol {
     // waveForm touch
@@ -290,7 +293,7 @@ extension ControllerWaveForm : WaveFormMoveProtocol {
     func touchesEnded(position : Int){
         print("touchesEnded touch begin")
     }
-
+   
 }
 
 extension ControllerWaveForm : ButtonMoveProtocol{
@@ -308,6 +311,7 @@ extension ControllerWaveForm : ButtonMoveProtocol{
             mStartPos = trap(pos: Int (mTouchInitialStartPos + delta));
             // mEndPos = trap(pos: Int (mTouchInitialEndPos + delta));
             //waveFormView.updateStart(x: Float(position))
+            print("startPos result \(mStartPos)")
         }else {
             mEndPos = trap(pos: Int(mTouchInitialEndPos + delta));
             if mEndPos < mStartPos {

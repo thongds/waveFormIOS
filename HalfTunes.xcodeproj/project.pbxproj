@@ -12,6 +12,8 @@
 		5C1C97111DC9914700614A82 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C1C97101DC9914700614A82 /* Utils.swift */; };
 		5C28556E1DC5D096004697D0 /* CustomButtom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C28556D1DC5D096004697D0 /* CustomButtom.swift */; };
 		5C32CC791DB3B7EA00045852 /* SpeakingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C32CC781DB3B7EA00045852 /* SpeakingViewController.swift */; };
+		5C4653C71DCAEDC10014B3B7 /* ControllerWF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4653C61DCAEDC10014B3B7 /* ControllerWF.swift */; };
+		5C4653C91DCAEDD20014B3B7 /* WaveForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4653C81DCAEDD20014B3B7 /* WaveForm.swift */; };
 		5C9E3D181DB8A9DA00226424 /* CheapMp3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E3D171DB8A9DA00226424 /* CheapMp3.swift */; };
 		5C9E3D1A1DB8AB5900226424 /* DrawWaveFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E3D191DB8AB5900226424 /* DrawWaveFormViewController.swift */; };
 		5CE1B3AE1DC01F8D00EC0288 /* WaveFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE1B3AD1DC01F8D00EC0288 /* WaveFormView.swift */; };
@@ -31,6 +33,8 @@
 		5C1C97101DC9914700614A82 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = "../../../../../../Downloads/01-AudioWithAVFoundation-RecordingAndPlayback-Resources-2/01-AudioWithAVFoundation-RecordingAndPlayback-DemoStarter/PenguinPet/PenguinPet/Utils.swift"; sourceTree = "<group>"; };
 		5C28556D1DC5D096004697D0 /* CustomButtom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomButtom.swift; sourceTree = "<group>"; };
 		5C32CC781DB3B7EA00045852 /* SpeakingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeakingViewController.swift; sourceTree = "<group>"; };
+		5C4653C61DCAEDC10014B3B7 /* ControllerWF.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWF.swift; sourceTree = "<group>"; };
+		5C4653C81DCAEDD20014B3B7 /* WaveForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveForm.swift; sourceTree = "<group>"; };
 		5C9E3D171DB8A9DA00226424 /* CheapMp3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheapMp3.swift; sourceTree = "<group>"; };
 		5C9E3D191DB8AB5900226424 /* DrawWaveFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawWaveFormViewController.swift; sourceTree = "<group>"; };
 		5CE1B3AD1DC01F8D00EC0288 /* WaveFormView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveFormView.swift; sourceTree = "<group>"; };
@@ -72,6 +76,8 @@
 				5CE1B3AD1DC01F8D00EC0288 /* WaveFormView.swift */,
 				5C28556D1DC5D096004697D0 /* CustomButtom.swift */,
 				5C0FCF701DC6314D002C34B3 /* ControllerWaveForm.swift */,
+				5C4653C61DCAEDC10014B3B7 /* ControllerWF.swift */,
+				5C4653C81DCAEDD20014B3B7 /* WaveForm.swift */,
 			);
 			name = CustomView;
 			sourceTree = "<group>";
@@ -212,6 +218,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CE1B3AE1DC01F8D00EC0288 /* WaveFormView.swift in Sources */,
+				5C4653C71DCAEDC10014B3B7 /* ControllerWF.swift in Sources */,
 				D9EF8FEA1B53FD6900EFC4B6 /* SearchViewController.swift in Sources */,
 				D9EF8FC71B53FD2100EFC4B6 /* AppDelegate.swift in Sources */,
 				5C9E3D181DB8A9DA00226424 /* CheapMp3.swift in Sources */,
@@ -220,6 +227,7 @@
 				5C32CC791DB3B7EA00045852 /* SpeakingViewController.swift in Sources */,
 				5C9E3D1A1DB8AB5900226424 /* DrawWaveFormViewController.swift in Sources */,
 				5C0FCF711DC6314D002C34B3 /* ControllerWaveForm.swift in Sources */,
+				5C4653C91DCAEDD20014B3B7 /* WaveForm.swift in Sources */,
 				5C0BEB831DB382EA00CF65AF /*  Download.swift in Sources */,
 				5C28556E1DC5D096004697D0 /* CustomButtom.swift in Sources */,
 				5C1C97111DC9914700614A82 /* Utils.swift in Sources */,

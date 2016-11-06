@@ -94,7 +94,7 @@ class WaveFormView: UIView {
         if let delegateProtocol = deletgate {
              mWaveFormProtocol = delegateProtocol
         }
-        self.setNeedsDisplay()
+       // self.setNeedsDisplay()
     }
     
     
@@ -107,24 +107,15 @@ class WaveFormView: UIView {
     // An empty implementation adversely affects performance during animation.
     override func draw(_ rect: CGRect) {
         // Drawing code
-       
         
-        
-//        let rectShap = CGRect(x: 0, y: 0, width: caShap.bounds.width, height: caShap.bounds.height)
-//        let rectPath = UIBezierPath(rect: rectShap)
         var point : CGPoint
         let linePath = UIBezierPath()
         let lineTimePath = UIBezierPath()
         let unSelectPath = UIBezierPath()
         let start  = mOffset
         let ctr = Int(rect.height/2)
-//        strokeColor.setStroke()
-//        linePath.stroke()
-//        fillColor.setFill()
-//        linePath.fill()
+
         if mInitialized{
-//            print("mSelectionStart \(mSelectionStart)")
-//            print("mSelectionEnd \(mSelectionEnd)")
             for i in 0 ..< Int(rect.width){
                
                 let zoomLevelFloat : Float = mZoomFactorByZoomLevel[mZoomLevel]
@@ -136,19 +127,16 @@ class WaveFormView: UIView {
                 linePath.move(to: point)
                 point.y = CGFloat(y1)
                 linePath.addLine(to: point)
-                if i == Int(rect.width/2) {
+                if i+start == mPlaybackPos {
                     //masker time
-                    point = CGPoint(x: rect.width/3, y: 0)
+                    point = CGPoint(x: i, y: 0)
                     lineTimePath.move(to: point)
                     point.y = CGFloat(rect.height)
                     lineTimePath.addLine(to: point)
                     
                 }
-                
-            }
-            
-            for i in 0 ..< Int(rect.width) {
-                if i < mSelectionStart || i > mSelectionEnd {
+                // draw unselect 
+                if i+start < mSelectionStart || i+start > mSelectionEnd {
                     point = CGPoint(x:i, y: 0)
                     unSelectPath.move(to: point)
                     point.y = CGFloat(rect.height)
@@ -156,22 +144,21 @@ class WaveFormView: UIView {
                 }
 
             }
-           
+
             caShap.path = linePath.cgPath
             caShapUnSelect.path = unSelectPath.cgPath
             caShapMaskTime.path = lineTimePath.cgPath
-            
+           
         }
     }
-    
+   
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first{
             
             if let waveformDelegate = mWaveFormProtocol {
                 waveformDelegate.touchesBegan(position: Int(touch.location(in: self).x))
             }
-//            mTouchStart = Int(touch.location(in: self).x)
-//            mTouchInitialOffset = mOffset;
+
         }
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -181,12 +168,10 @@ class WaveFormView: UIView {
             if let waveformDelegate = mWaveFormProtocol {
                 waveformDelegate.touchesMoved(position: Int(point.x))
             }
-//            mOffset = trap(pos: Int(mTouchInitialOffset + (mTouchStart - Int(point.x) )));
-//            self.setNeedsDisplay()
         }
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("touch end")
+    
     }
     public func updateStart(x : Float) {
         startTest = Int(x)
