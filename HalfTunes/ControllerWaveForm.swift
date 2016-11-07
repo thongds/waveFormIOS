@@ -8,7 +8,7 @@
 
 import UIKit
 import AVFoundation
-
+import MediaPlayer
 class ControllerWaveForm: UIView{
 
     var urlLocal = URL(fileURLWithPath: "")
@@ -35,7 +35,10 @@ class ControllerWaveForm: UIView{
     var audioStatus : AudioStatus = AudioStatus.stopped
     var mPlayStartMsec : Int = 0
     var mTimer : Timer?
+    var mediaPlayer:MPMusicPlayerController = MPMusicPlayerController.applicationMusicPlayer()
+    
     init(frame: CGRect,mp3Url : URL) {
+        
         urlLocal = mp3Url
         let playButtonRect = CGRect(x: frame.size.width/2-50, y: frame.size.height-100, width: 100, height: 100)
         playButton = UIButton(frame: playButtonRect)
@@ -122,9 +125,7 @@ class ControllerWaveForm: UIView{
         updateDisplay();
     }
     func clickPlay(){
-      
         onPlay(startPosition: mStartPos)
-        
     }
     func trap(pos : Int) -> Int {
         if (pos < 0){
@@ -147,10 +148,12 @@ class ControllerWaveForm: UIView{
             }
             return
         }
-        mPlayStartMsec = mWaveformView!.pixelsToMillisecs(pixels: startPosition);
+        mPlayStartMsec = mWaveformView!.pixelsToMillisecs(pixels: startPosition)
+        print("mPlayStartMsec \(mPlayStartMsec)")
         if let audioPlayerUW = audioPlayer {
-            audioPlayerUW.currentTime = TimeInterval(mPlayStartMsec)
+            audioPlayerUW.currentTime = TimeInterval(exactly: Float(mPlayStartMsec)/1000)!
             audioPlayerUW.play()
+           // audioPlayerUW.play(atTime: TimeInterval(1))
         }
         updateButton()
         mTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(self.updateDisplay), userInfo: nil, repeats: true)
