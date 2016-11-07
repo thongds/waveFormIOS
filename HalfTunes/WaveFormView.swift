@@ -22,8 +22,8 @@ class WaveFormView: UIView {
     private var caShapUnSelect : CAShapeLayer
     private var urlLocal = URL(fileURLWithPath: "")
     private  var mSoundFile = CheapMp3()
-    var mSampleRate: Int?
-    var mSamplesPerFrame: Int?
+    var mSampleRate: Int = 0
+    var mSamplesPerFrame: Int = 0
     var minGain : Float = 0
     var range: Float = 0
     var  mNumZoomLevels : Int = 0
@@ -454,8 +454,8 @@ class WaveFormView: UIView {
     
     func millisecsToPixels(msecs : Int) -> Int {
         let z : Double = Double(mZoomFactorByZoomLevel[mZoomLevel])
-        let first = Double(msecs) * 1.0 * Double(mSampleRate!) * z
-        let last = (1000.0 * Double(mSamplesPerFrame!)) + 0.5
+        let first = Double(msecs) * 1.0 * Double(mSampleRate) * z
+        let last = (1000.0 * Double(mSamplesPerFrame)) + 0.5
         return Int(first/last)
         
     }
@@ -476,8 +476,10 @@ class WaveFormView: UIView {
     // Play convert
     func pixelsToMillisecs(pixels : Int) -> Int {
         let z : Double = Double(mZoomFactorByZoomLevel[mZoomLevel])
-        let first = pixels * (1000 * mSamplesPerFrame!)
-        let second = (Double(mSampleRate!) * z) + 0.5
+        print(pixels)
+        print(mSamplesPerFrame)
+        let first = pixels * (1000 * mSamplesPerFrame)
+        let second = (Double(mSampleRate) * z) + 0.5
         return Int( Double(first)/second )
     }
     

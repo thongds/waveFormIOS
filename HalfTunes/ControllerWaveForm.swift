@@ -34,6 +34,7 @@ class ControllerWaveForm: UIView{
     var mPlayStartOffset : Int = 0
     var audioStatus : AudioStatus = AudioStatus.stopped
     var mPlayStartMsec : Int = 0
+    var mPlayEndMsec : Int = 0
     var mTimer : Timer?
     var mediaPlayer:MPMusicPlayerController = MPMusicPlayerController.applicationMusicPlayer()
     
@@ -137,9 +138,7 @@ class ControllerWaveForm: UIView{
         return pos;
     }
     func onPlay(startPosition : Int){
-        print("OnPlay startPos \(startPosition)")
-        
-        if isPlaying() {
+       if isPlaying() {
             if let audioPlayerUW = audioPlayer {
                 audioPlayerUW.pause()
                 mTimer?.invalidate()
@@ -149,11 +148,10 @@ class ControllerWaveForm: UIView{
             return
         }
         mPlayStartMsec = mWaveformView!.pixelsToMillisecs(pixels: startPosition)
-        print("mPlayStartMsec \(mPlayStartMsec)")
+        mPlayEndMsec = mWaveformView!.pixelsToMillisecs(pixels: mEndPos)
         if let audioPlayerUW = audioPlayer {
             audioPlayerUW.currentTime = TimeInterval(exactly: Float(mPlayStartMsec)/1000)!
             audioPlayerUW.play()
-           // audioPlayerUW.play(atTime: TimeInterval(1))
         }
         updateButton()
         mTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(self.updateDisplay), userInfo: nil, repeats: true)
@@ -172,6 +170,13 @@ class ControllerWaveForm: UIView{
             let frames : Int = mWaveformView!.millisecsToPixels(msecs: now)
             mWaveformView?.setPlayback(pos: frames)
             setOffsetGoalNoUpdate(offset: frames - mWidth / 2)
+           
+            if now > mPlayEndMsec {
+                if let audioPlayerUW = audioPlayer {
+                    audioPlayerUW.currentTime = TimeInterval(exactly: Float(mPlayStartMsec)/1000)!
+                    audioPlayerUW.play()
+                }
+            }
         }
         
         var offsetDelta : Int = 0
@@ -316,6 +321,8 @@ extension ControllerWaveForm : ButtonMoveProtocol{
             }
             //waveFormView.updateEnd(x: Float(position))
         }
+        mPlayStartMsec = mWaveformView!.pixelsToMillisecs(pixels: mStartPos)
+        mPlayEndMsec = mWaveformView!.pixelsToMillisecs(pixels: mEndPos)
         updateDisplay()
         
     }
