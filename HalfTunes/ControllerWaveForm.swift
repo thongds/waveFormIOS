@@ -167,45 +167,39 @@ class ControllerWaveForm: UIView{
         }
     }
     func updateDisplay() {
-        //print("call updateDisplay")
         if isPlaying() {
             let now : Int = Int(round(Double(audioPlayer.currentTime)*1000) + Double(mPlayStartOffset))
-            //print("now \(now)")
             let frames : Int = mWaveformView!.millisecsToPixels(msecs: now)
-            print("frames \(frames)")
-            mWaveformView?.setPlayback(pos: frames);
-            setOffsetGoalNoUpdate(offset: frames - mWidth / 2);
+            mWaveformView?.setPlayback(pos: frames)
+            setOffsetGoalNoUpdate(offset: frames - mWidth / 2)
         }
         
         var offsetDelta : Int = 0
         
         if (!mTouchDragging) {
             if (mFlingVelocity != 0) {
-                
-                
-                offsetDelta = mFlingVelocity / 30;
+                offsetDelta = mFlingVelocity / 30
                 if (mFlingVelocity > 80) {
-                    mFlingVelocity -= 80;
+                    mFlingVelocity -= 80
                 } else if (mFlingVelocity < -80) {
-                    mFlingVelocity += 80;
+                    mFlingVelocity += 80
                 } else {
-                    mFlingVelocity = 0;
+                    mFlingVelocity = 0
                 }
                 
                 mOffset += offsetDelta;
                 
                 if (mOffset + mWidth / 2 > mMaxPos) {
-                    mOffset = mMaxPos - mWidth / 2;
-                    mFlingVelocity = 0;
+                    mOffset = mMaxPos - mWidth / 2
+                    mFlingVelocity = 0
                 }
                 if (mOffset < 0) {
                     mOffset = 0;
-                    mFlingVelocity = 0;
+                    mFlingVelocity = 0
                 }
-                mOffsetGoal = mOffset;
+                mOffsetGoal = mOffset
             } else {
-                offsetDelta = mOffsetGoal - mOffset;
-                
+                offsetDelta = mOffsetGoal - mOffset
                 if (offsetDelta > 10){
                     offsetDelta = offsetDelta / 10
                 }
@@ -219,13 +213,13 @@ class ControllerWaveForm: UIView{
                     offsetDelta = -1
                 }
                 else{
-                    offsetDelta = 0;
+                    offsetDelta = 0
                 }
-                mOffset += offsetDelta;
+                mOffset += offsetDelta
+              
             }
         }
         
-        mOffset += offsetDelta
         if let waveFormUW = mWaveformView {
             waveFormUW.setParameters(start: mStartPos, end: mEndPos, offset: mOffset)
             waveFormUW.setNeedsDisplay()

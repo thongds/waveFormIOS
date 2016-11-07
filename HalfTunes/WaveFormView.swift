@@ -119,7 +119,7 @@ class WaveFormView: UIView {
             for i in 0 ..< Int(rect.width){
                
                 let zoomLevelFloat : Float = mZoomFactorByZoomLevel[mZoomLevel]
-                let h : Int  = (Int) (getScaledHeight(zoomLevel: zoomLevelFloat , i: start + i) * Float(getMeasuredHeight() / 2));
+                let h : Int  = (Int) (getScaledHeight(zoomLevel: zoomLevelFloat , i: start + i ) * Float(getMeasuredHeight() / 2));
                
                 let y0 = ctr - h
                 let y1 = ctr + 1 + h
