@@ -29,12 +29,14 @@ class CustomButtom: UIButton {
     let delegateButton : ButtonMoveProtocol?
     var touchInsideButton : CGFloat = 0
     var parentWidth : CGFloat = 0
+    var mFrame : CGRect?
     init(frame: CGRect,parentViewParam : UIView,isLeft : Bool,delegate : ButtonMoveProtocol) {
         parentView = parentViewParam
         parentWidth = parentViewParam.frame.width
         controllFormView = parentView as! ControllerWaveForm
         type = isLeft
         delegateButton = delegate
+        mFrame = frame
         super.init(frame: frame)
     }
     
@@ -57,7 +59,13 @@ class CustomButtom: UIButton {
             delegateButton?.buttonTouchesBegan(position: Int(touchesBegan), isLeft: type)
         }
     }
-    
+    func getWidth() -> Float{
+        if let frameUW = mFrame {
+            return Float(frameUW.size.width)
+        }else {
+            return 0
+        }
+    }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touche = touches.first {
             let touchMove = touche.location(in: parentView).x

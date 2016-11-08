@@ -237,10 +237,16 @@ class ControllerWaveForm: UIView{
             waveFormUW.setParameters(start: mStartPos, end: mEndPos, offset: mOffset)
             waveFormUW.setNeedsDisplay()
         }
-        let startX : Int = mStartPos - mOffset
-        let endX : Int = mEndPos - mOffset - 100
-        mButtonStart?.updateFramePostion(position: startX)
-        mButtonEnd?.updateFramePostion(position: endX)
+        
+        if let buttonEndUW = mButtonEnd {
+            let endX : Int = mEndPos - mOffset - Int(buttonEndUW.getWidth()-buttonEndUW.getWidth()/2)
+            buttonEndUW.updateFramePostion(position: endX)
+        }
+        if let buttonStartUW = mButtonStart {
+            let startX : Int = mStartPos - mOffset - Int (buttonStartUW.getWidth()/2)
+            buttonStartUW.updateFramePostion(position: startX)
+        }
+        
     }
     
     func setOffsetGoalStart() {
@@ -324,9 +330,9 @@ extension ControllerWaveForm : ButtonMoveProtocol{
         let delta = position - mTouchStart;
         if isLeft {
             mStartPos = trap(pos: Int (mTouchInitialStartPos + delta));
-            // mEndPos = trap(pos: Int (mTouchInitialEndPos + delta));
-            //waveFormView.updateStart(x: Float(position))
-            print("startPos result \(mStartPos)")
+            if mStartPos > mEndPos {
+                mStartPos = mEndPos
+            }
         }else {
             mEndPos = trap(pos: Int(mTouchInitialEndPos + delta));
             if mEndPos < mStartPos {
