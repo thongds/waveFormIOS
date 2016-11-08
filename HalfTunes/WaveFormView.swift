@@ -257,7 +257,7 @@ class WaveFormView: UIView {
         
         range = maxGain - minGain;
         
-        mNumZoomLevels = 4;
+        mNumZoomLevels = 3;
         mLenByZoomLevel = Array(repeatElement(0, count: 4))
         mZoomFactorByZoomLevel = Array(repeating: 0, count: 4)
         
