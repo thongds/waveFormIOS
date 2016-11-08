@@ -478,7 +478,7 @@ class WaveFormView: UIView {
         let z : Double = Double(mZoomFactorByZoomLevel[mZoomLevel])
         print(pixels)
         print(mSamplesPerFrame)
-        let first = pixels * (1000 * mSamplesPerFrame)
+        let first : Float = Float (pixels) * Float(1000 * mSamplesPerFrame)
         let second = (Double(mSampleRate) * z) + 0.5
         return Int( Double(first)/second )
     }

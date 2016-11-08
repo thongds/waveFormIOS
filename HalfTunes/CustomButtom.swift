@@ -36,7 +36,6 @@ class CustomButtom: UIButton {
         type = isLeft
         delegateButton = delegate
         super.init(frame: frame)
-        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -62,16 +61,16 @@ class CustomButtom: UIButton {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touche = touches.first {
             let touchMove = touche.location(in: parentView).x
-           
-            print("buttonMove.x  \(touchMove)")
-            print("buttonInside  \(touchInsideButton)")
+//            print("buttonMove.x  \(touchMove)")
+//            print("buttonInside  \(touchInsideButton)")
             let buttonPos = touchMove - touchInsideButton
             if buttonPos > 0 && buttonPos < parentWidth {
                     self.frame.origin.x = buttonPos
             }
-            
             delegateButton?.buttonTouchesMoved(position: Int(touchMove), isLeft: type)
         }
     }
-
+    func updateFramePostion(position : Int)  {
+        self.frame.origin.x = CGFloat(position)
+    }
 }

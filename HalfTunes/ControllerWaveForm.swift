@@ -9,6 +9,8 @@
 import UIKit
 import AVFoundation
 import MediaPlayer
+
+
 class ControllerWaveForm: UIView{
 
     var urlLocal = URL(fileURLWithPath: "")
@@ -36,6 +38,9 @@ class ControllerWaveForm: UIView{
     var mPlayStartMsec : Int = 0
     var mPlayEndMsec : Int = 0
     var mTimer : Timer?
+    var mButtonStart : CustomButtom?
+    var mButtonEnd  : CustomButtom?
+    
     var mediaPlayer:MPMusicPlayerController = MPMusicPlayerController.applicationMusicPlayer()
     
     init(frame: CGRect,mp3Url : URL) {
@@ -69,16 +74,16 @@ class ControllerWaveForm: UIView{
         zoomOutButton.addTarget(self, action: #selector(self.waveformZoomOut), for: .touchUpInside)
         zoomInButton.addTarget(self, action: #selector(self.waveformZoomIn), for: .touchUpInside)
         finishOpeningSoundFile()
-        let buttonStart = CustomButtom(frame: CGRect(x: 0, y: 100, width: buttonWidth, height: 50),parentViewParam : self,isLeft : true,delegate: self)
-        buttonStart.backgroundColor = UIColor.green
-        buttonStart.setTitle("Test Button", for: .normal)
+        mButtonStart = CustomButtom(frame: CGRect(x: 0, y: 100, width: buttonWidth, height: 50),parentViewParam : self,isLeft : true,delegate: self)
+        mButtonStart?.backgroundColor = UIColor.green
+        mButtonStart?.setTitle("Test Button", for: .normal)
        
-        let buttonEnd = CustomButtom(frame: CGRect(x: Int(frame.size.width-100), y: Int(frame.size.height-150), width: buttonWidth, height: 50),parentViewParam : self,isLeft : false,delegate: self)
-        buttonEnd.backgroundColor = UIColor.green
-        buttonEnd.setTitle("Test Button", for: .normal)
+        mButtonEnd = CustomButtom(frame: CGRect(x: Int(frame.size.width-100), y: Int(frame.size.height-150), width: buttonWidth, height: 50),parentViewParam : self,isLeft : false,delegate: self)
+        mButtonEnd?.backgroundColor = UIColor.green
+        mButtonEnd?.setTitle("Test Button", for: .normal)
         addSubview(mWaveformView!)
-        addSubview(buttonEnd)
-        addSubview(buttonStart)
+        addSubview(mButtonEnd!)
+        addSubview(mButtonStart!)
         addSubview(playButton)
         addSubview(zoomInButton)
         addSubview(zoomOutButton)
@@ -157,6 +162,9 @@ class ControllerWaveForm: UIView{
         mTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(self.updateDisplay), userInfo: nil, repeats: true)
         mTimer?.fire()
     }
+    
+   
+    
     func updateButton(){
         if isPlaying() {
             playButton.setTitle("pause", for: .normal)
@@ -229,6 +237,10 @@ class ControllerWaveForm: UIView{
             waveFormUW.setParameters(start: mStartPos, end: mEndPos, offset: mOffset)
             waveFormUW.setNeedsDisplay()
         }
+        let startX : Int = mStartPos - mOffset
+        let endX : Int = mEndPos - mOffset - 100
+        mButtonStart?.updateFramePostion(position: startX)
+        mButtonEnd?.updateFramePostion(position: endX)
     }
     
     func setOffsetGoalStart() {
