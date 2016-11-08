@@ -305,7 +305,8 @@ extension ControllerWaveForm : WaveFormMoveProtocol {
         updateDisplay()
     }
     func touchesEnded(position : Int){
-        print("touchesEnded touch begin")
+        mTouchDragging = false;
+        mOffsetGoal = mOffset;
     }
    
 }

@@ -171,7 +171,15 @@ class WaveFormView: UIView {
         }
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-    
+        if let touch = touches.first{
+            let point = touch.location(in: self)
+            if let waveformDelegate = mWaveFormProtocol {
+                waveformDelegate.touchesEnded(position: Int(point.x))
+            }
+        }
+    }
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("touch cancel")
     }
     public func updateStart(x : Float) {
         startTest = Int(x)
